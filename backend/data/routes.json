@@ -1,0 +1,741 @@
+{
+  "routes": [
+    {
+      "id": "ac1330da",
+      "filename": "02_ZAP_C_San_Pedro_Huaquilpan_Zapotlan_Pachuca_y_viceversa.gpx",
+      "nombre": "San Pedro Huaquilpan Zapotlan Pachuca y viceversa",
+      "municipio": "Zapotlán de Juárez",
+      "modalidad": "Público",
+      "clave_mnemotecnica": "02 ZAP C",
+      "uploaded_at": "2025-12-24T12:19:11.251343",
+      "analyzed": true,
+      "points_count": 2750,
+      "bounds": [
+        -98.86276,
+        19.96853333,
+        -98.75370167,
+        20.10643833
+      ],
+      "analysis": {
+        "duracion_min": 111,
+        "distancia_km": 43.819,
+        "distancia_rnc_km": 56.597,
+        "puntos_totales": 2750,
+        "velocidad_promedio_kmh": 45.7,
+        "velocidad_maxima_kmh": 113.4,
+        "elevacion_min_m": 2332.9,
+        "elevacion_max_m": 2387.8,
+        "ganancia_elevacion_m": 1034.9,
+        "perdida_elevacion_m": 935.0,
+        "pendiente_promedio_subida": 6.44,
+        "pendiente_promedio_bajada": -5.96,
+        "pendiente_maxima": 24.8,
+        "superficie": {
+          "Con pavimento": 53.059,
+          "Sin pavimento": 3.538
+        },
+        "administracion": {
+          "Municipal": 29.744,
+          "Federal": 25.751,
+          "Estatal": 1.103
+        },
+        "tipo_vialidad": {
+          "Avenida": 3.579,
+          "Carretera": 26.854,
+          "Retorno U": 0.53,
+          "Camino": 3.538,
+          "Enlace": 3.793,
+          "Calle": 2.255,
+          "Prolongación": 0.058,
+          "Boulevard": 15.767,
+          "Otro": 0.223
+        },
+        "municipios_atravesados": [
+          {
+            "cve_mun": "051",
+            "nombre": "Mineral de la Reforma",
+            "cvegeo": "13051",
+            "localidades_urbanas": [
+              {
+                "cvegeo": "130510092",
+                "nombre": "Bosques del Mineral",
+                "cve_mun": "051",
+                "ambito": "Urbana",
+                "distancia_red_m": 441.2
+              },
+              {
+                "cvegeo": "130510110",
+                "nombre": "Los Pinos",
+                "cve_mun": "051",
+                "ambito": "Urbana",
+                "distancia_red_m": 359.1
+              },
+              {
+                "cvegeo": "130510123",
+                "nombre": "Privada Quinta Bonita",
+                "cve_mun": "051",
+                "ambito": "Urbana",
+                "distancia_red_m": 202.7
+              },
+              {
+                "cvegeo": "130510130",
+                "nombre": "Rinconadas de San Francisco",
+                "cve_mun": "051",
+                "ambito": "Urbana",
+                "distancia_red_m": 481.6
+              },
+              {
+                "cvegeo": "130510132",
+                "nombre": "Rincones del Paraíso",
+                "cve_mun": "051",
+                "ambito": "Urbana",
+                "distancia_red_m": 114.5
+              },
+              {
+                "cvegeo": "130510141",
+                "nombre": "Tulipanes",
+                "cve_mun": "051",
+                "ambito": "Urbana",
+                "distancia_red_m": 613.5
+              },
+              {
+                "cvegeo": "130510142",
+                "nombre": "Paseo de los Tulipanes",
+                "cve_mun": "051",
+                "ambito": "Urbana",
+                "distancia_red_m": 698.8
+              },
+              {
+                "cvegeo": "130510145",
+                "nombre": "Valle Dorado",
+                "cve_mun": "051",
+                "ambito": "Urbana",
+                "distancia_red_m": 86.8
+              }
+            ],
+            "localidades_rurales": []
+          },
+          {
+            "cve_mun": "048",
+            "nombre": "Pachuca de Soto",
+            "cvegeo": "13048",
+            "localidades_urbanas": [],
+            "localidades_rurales": []
+          },
+          {
+            "cve_mun": "082",
+            "nombre": "Zapotlán de Juárez",
+            "cvegeo": "13082",
+            "localidades_urbanas": [
+              {
+                "cvegeo": "130820001",
+                "nombre": "Zapotlán de Juárez",
+                "cve_mun": "082",
+                "ambito": "Urbana",
+                "distancia_red_m": 354.4
+              }
+            ],
+            "localidades_rurales": [
+              {
+                "cvegeo": "130820042",
+                "nombre": "Real Bilbao [Fraccionamiento]",
+                "cve_mun": "082",
+                "ambito": "Rural",
+                "distancia_red_m": 429.0
+              }
+            ]
+          },
+          {
+            "cve_mun": "083",
+            "nombre": "Zempoala",
+            "cvegeo": "13083",
+            "localidades_urbanas": [],
+            "localidades_rurales": []
+          }
+        ],
+        "num_municipios": 4,
+        "localidades_urbanas": 9,
+        "localidades_rurales": 1,
+        "total_localidades": 10,
+        "confianza_matching": 93.1,
+        "match_rate_pct": 99.5,
+        "distancia_promedio_match_m": 3.5,
+        "puntos_sin_match": 14,
+        "area_servicio": {
+          "poblacion_total": 35298,
+          "poblacion_femenina": 18493,
+          "poblacion_masculina": 16468,
+          "piramide_poblacional": {
+            "0-14": {
+              "total": 6690,
+              "label": "0-14 años"
+            },
+            "15-29": {
+              "total": 8902,
+              "label": "15-29 años"
+            },
+            "30-59": {
+              "total": 14819,
+              "label": "30-59 años"
+            },
+            "60+": {
+              "total": 4042,
+              "label": "60 años y más"
+            }
+          },
+          "discapacidad": {
+            "total": 1079,
+            "porcentaje": 3.06
+          },
+          "manzanas_count": 693,
+          "buffer_distance_m": 700,
+          "network_analysis": true
+        }
+      },
+      "analyzed_at": "2025-12-26T11:35:40.508145"
+    },
+    {
+      "id": "a0542a02",
+      "filename": "01_ZAP_C_Acayuca-San_Pedro-Zapotlan.gpx",
+      "nombre": "Acayuca-San Pedro-Zapotlán",
+      "municipio": "Zapotlán de Juárez",
+      "modalidad": "Público",
+      "clave_mnemotecnica": "01 ZAP C",
+      "uploaded_at": "2025-12-24T12:19:48.217884",
+      "analyzed": true,
+      "points_count": 1186,
+      "bounds": [
+        -98.86516326,
+        19.97125493,
+        -98.84233501,
+        20.0298912
+      ],
+      "analysis": {
+        "duracion_min": 52,
+        "distancia_km": 16.606,
+        "distancia_rnc_km": 12.232,
+        "puntos_totales": 1186,
+        "velocidad_promedio_kmh": 33.5,
+        "velocidad_maxima_kmh": 63.2,
+        "elevacion_min_m": 2339.5,
+        "elevacion_max_m": 2451.0,
+        "ganancia_elevacion_m": 54.1,
+        "perdida_elevacion_m": 81.3,
+        "pendiente_promedio_subida": 3.32,
+        "pendiente_promedio_bajada": -3.63,
+        "pendiente_maxima": 17.88,
+        "superficie": {
+          "Con pavimento": 12.232
+        },
+        "administracion": {
+          "Municipal": 8.059,
+          "Estatal": 4.173
+        },
+        "tipo_vialidad": {
+          "Avenida": 7.387,
+          "Carretera": 4.173,
+          "Calle": 0.381,
+          "Privada": 0.292
+        },
+        "municipios_atravesados": [
+          {
+            "cve_mun": "052",
+            "nombre": "San Agustín Tlaxiaca",
+            "cvegeo": "13052",
+            "localidades_urbanas": [],
+            "localidades_rurales": []
+          },
+          {
+            "cve_mun": "082",
+            "nombre": "Zapotlán de Juárez",
+            "cvegeo": "13082",
+            "localidades_urbanas": [
+              {
+                "cvegeo": "130820003",
+                "nombre": "San Pedro Huaquilpan",
+                "cve_mun": "082",
+                "ambito": "Urbana",
+                "distancia_red_m": 354.9
+              },
+              {
+                "cvegeo": "130820001",
+                "nombre": "Zapotlán de Juárez",
+                "cve_mun": "082",
+                "ambito": "Urbana",
+                "distancia_red_m": 395.3
+              },
+              {
+                "cvegeo": "130820002",
+                "nombre": "Acayuca",
+                "cve_mun": "082",
+                "ambito": "Urbana",
+                "distancia_red_m": 517.1
+              }
+            ],
+            "localidades_rurales": [
+              {
+                "cvegeo": "130820036",
+                "nombre": "La Fortaleza",
+                "cve_mun": "082",
+                "ambito": "Rural",
+                "distancia_red_m": 169.3
+              }
+            ]
+          }
+        ],
+        "num_municipios": 2,
+        "localidades_urbanas": 3,
+        "localidades_rurales": 1,
+        "total_localidades": 4,
+        "confianza_matching": 93.7,
+        "match_rate_pct": 94.7,
+        "distancia_promedio_match_m": 3.1,
+        "puntos_sin_match": 63,
+        "area_servicio": {
+          "poblacion_total": 7331,
+          "poblacion_femenina": 3828,
+          "poblacion_masculina": 3433,
+          "piramide_poblacional": {
+            "0-14": {
+              "total": 1616,
+              "label": "0-14 años"
+            },
+            "15-29": {
+              "total": 1674,
+              "label": "15-29 años"
+            },
+            "30-59": {
+              "total": 2852,
+              "label": "30-59 años"
+            },
+            "60+": {
+              "total": 1081,
+              "label": "60 años y más"
+            }
+          },
+          "discapacidad": {
+            "total": 345,
+            "porcentaje": 4.71
+          },
+          "manzanas_count": 137,
+          "buffer_distance_m": 700,
+          "network_analysis": true
+        }
+      },
+      "analyzed_at": "2025-12-26T11:35:49.797795"
+    },
+    {
+      "id": "1377819b",
+      "filename": "03_ZAP_C_Acayuca-entronque_Acayuca_con_carr._Fed__85_12_dic.gpx",
+      "nombre": "Acayuca- Entronque- Acayuca con carr fed 85",
+      "municipio": "Zapotlán de Juárez",
+      "modalidad": "Público",
+      "clave_mnemotecnica": "03 ZAP C",
+      "uploaded_at": "2025-12-24T12:20:27.537147",
+      "analyzed": true,
+      "points_count": 780,
+      "bounds": [
+        -98.84844725,
+        20.00752035,
+        -98.82409047,
+        20.03857355
+      ],
+      "analysis": {
+        "duracion_min": 38,
+        "distancia_km": 10.589,
+        "distancia_rnc_km": 8.053,
+        "puntos_totales": 780,
+        "velocidad_promedio_kmh": 28.8,
+        "velocidad_maxima_kmh": 60.3,
+        "elevacion_min_m": 2347.3,
+        "elevacion_max_m": 2477.3,
+        "ganancia_elevacion_m": 93.7,
+        "perdida_elevacion_m": 102.4,
+        "pendiente_promedio_subida": 4.14,
+        "pendiente_promedio_bajada": -4.85,
+        "pendiente_maxima": 22.18,
+        "superficie": {
+          "Con pavimento": 7.948,
+          "Sin pavimento": 0.106
+        },
+        "administracion": {
+          "Municipal": 6.532,
+          "Estatal": 1.416,
+          "N/D": 0.106
+        },
+        "tipo_vialidad": {
+          "Avenida": 4.018,
+          "Calle": 2.514,
+          "Carretera": 1.416,
+          "Camino": 0.106
+        },
+        "municipios_atravesados": [
+          {
+            "cve_mun": "048",
+            "nombre": "Pachuca de Soto",
+            "cvegeo": "13048",
+            "localidades_urbanas": [],
+            "localidades_rurales": [
+              {
+                "cvegeo": "130480215",
+                "nombre": "Las Campanitas",
+                "cve_mun": "048",
+                "ambito": "Rural",
+                "distancia_red_m": 272.1
+              }
+            ]
+          },
+          {
+            "cve_mun": "052",
+            "nombre": "San Agustín Tlaxiaca",
+            "cvegeo": "13052",
+            "localidades_urbanas": [],
+            "localidades_rurales": []
+          },
+          {
+            "cve_mun": "082",
+            "nombre": "Zapotlán de Juárez",
+            "cvegeo": "13082",
+            "localidades_urbanas": [
+              {
+                "cvegeo": "130820002",
+                "nombre": "Acayuca",
+                "cve_mun": "082",
+                "ambito": "Urbana",
+                "distancia_red_m": 517.1
+              }
+            ],
+            "localidades_rurales": [
+              {
+                "cvegeo": "130820028",
+                "nombre": "Plan de Guadalupe",
+                "cve_mun": "082",
+                "ambito": "Rural",
+                "distancia_red_m": 394.4
+              }
+            ]
+          }
+        ],
+        "num_municipios": 3,
+        "localidades_urbanas": 1,
+        "localidades_rurales": 2,
+        "total_localidades": 3,
+        "confianza_matching": 92.6,
+        "match_rate_pct": 100.0,
+        "distancia_promedio_match_m": 3.7,
+        "puntos_sin_match": 0,
+        "area_servicio": {
+          "poblacion_total": 7078,
+          "poblacion_femenina": 3634,
+          "poblacion_masculina": 3347,
+          "piramide_poblacional": {
+            "0-14": {
+              "total": 1753,
+              "label": "0-14 años"
+            },
+            "15-29": {
+              "total": 1706,
+              "label": "15-29 años"
+            },
+            "30-59": {
+              "total": 2637,
+              "label": "30-59 años"
+            },
+            "60+": {
+              "total": 834,
+              "label": "60 años y más"
+            }
+          },
+          "discapacidad": {
+            "total": 302,
+            "porcentaje": 4.27
+          },
+          "manzanas_count": 154,
+          "buffer_distance_m": 700,
+          "network_analysis": true
+        }
+      },
+      "analyzed_at": "2025-12-26T11:35:59.738418"
+    },
+    {
+      "id": "223f2366",
+      "filename": "04_zap_c__COL._OBRERA-_PACHUCA_CENTRAL.gpx",
+      "nombre": "Col Obrera Pachuca Central",
+      "municipio": "Zapotlán de Juárez",
+      "modalidad": "Público",
+      "clave_mnemotecnica": "04 ZAP C",
+      "uploaded_at": "2025-12-24T12:20:55.409890",
+      "analyzed": true,
+      "points_count": 676,
+      "bounds": [
+        -98.8442715,
+        20.01146722,
+        -98.75326381,
+        20.10745422
+      ],
+      "analysis": {
+        "duracion_min": 157,
+        "distancia_km": 36.039,
+        "distancia_rnc_km": 15.609,
+        "puntos_totales": 676,
+        "velocidad_promedio_kmh": 31.2,
+        "velocidad_maxima_kmh": 73.7,
+        "elevacion_min_m": 2335.0,
+        "elevacion_max_m": 2462.0,
+        "ganancia_elevacion_m": 324.0,
+        "perdida_elevacion_m": 287.0,
+        "pendiente_promedio_subida": 9.07,
+        "pendiente_promedio_bajada": -9.05,
+        "pendiente_maxima": 24.83,
+        "superficie": {
+          "Con pavimento": 15.609
+        },
+        "administracion": {
+          "Municipal": 11.632,
+          "Estatal": 1.416,
+          "Federal": 2.561
+        },
+        "tipo_vialidad": {
+          "Calle": 2.76,
+          "Avenida": 1.872,
+          "Carretera": 3.977,
+          "Boulevard": 5.588,
+          "Enlace": 1.304,
+          "Retorno U": 0.107
+        },
+        "municipios_atravesados": [
+          {
+            "cve_mun": "051",
+            "nombre": "Mineral de la Reforma",
+            "cvegeo": "13051",
+            "localidades_urbanas": [
+              {
+                "cvegeo": "130510092",
+                "nombre": "Bosques del Mineral",
+                "cve_mun": "051",
+                "ambito": "Urbana",
+                "distancia_red_m": 461.1
+              },
+              {
+                "cvegeo": "130510110",
+                "nombre": "Los Pinos",
+                "cve_mun": "051",
+                "ambito": "Urbana",
+                "distancia_red_m": 413.1
+              },
+              {
+                "cvegeo": "130510123",
+                "nombre": "Privada Quinta Bonita",
+                "cve_mun": "051",
+                "ambito": "Urbana",
+                "distancia_red_m": 224.3
+              },
+              {
+                "cvegeo": "130510130",
+                "nombre": "Rinconadas de San Francisco",
+                "cve_mun": "051",
+                "ambito": "Urbana",
+                "distancia_red_m": 481.6
+              },
+              {
+                "cvegeo": "130510132",
+                "nombre": "Rincones del Paraíso",
+                "cve_mun": "051",
+                "ambito": "Urbana",
+                "distancia_red_m": 202.0
+              },
+              {
+                "cvegeo": "130510145",
+                "nombre": "Valle Dorado",
+                "cve_mun": "051",
+                "ambito": "Urbana",
+                "distancia_red_m": 317.3
+              }
+            ],
+            "localidades_rurales": []
+          },
+          {
+            "cve_mun": "048",
+            "nombre": "Pachuca de Soto",
+            "cvegeo": "13048",
+            "localidades_urbanas": [],
+            "localidades_rurales": []
+          },
+          {
+            "cve_mun": "082",
+            "nombre": "Zapotlán de Juárez",
+            "cvegeo": "13082",
+            "localidades_urbanas": [
+              {
+                "cvegeo": "130820002",
+                "nombre": "Acayuca",
+                "cve_mun": "082",
+                "ambito": "Urbana",
+                "distancia_red_m": 349.5
+              }
+            ],
+            "localidades_rurales": [
+              {
+                "cvegeo": "130820028",
+                "nombre": "Plan de Guadalupe",
+                "cve_mun": "082",
+                "ambito": "Rural",
+                "distancia_red_m": 394.4
+              }
+            ]
+          },
+          {
+            "cve_mun": "083",
+            "nombre": "Zempoala",
+            "cvegeo": "13083",
+            "localidades_urbanas": [],
+            "localidades_rurales": []
+          }
+        ],
+        "num_municipios": 4,
+        "localidades_urbanas": 7,
+        "localidades_rurales": 1,
+        "total_localidades": 8,
+        "confianza_matching": 93.0,
+        "match_rate_pct": 99.6,
+        "distancia_promedio_match_m": 3.5,
+        "puntos_sin_match": 3,
+        "area_servicio": {
+          "poblacion_total": 49336,
+          "poblacion_femenina": 25793,
+          "poblacion_masculina": 23076,
+          "piramide_poblacional": {
+            "0-14": {
+              "total": 9629,
+              "label": "0-14 años"
+            },
+            "15-29": {
+              "total": 12077,
+              "label": "15-29 años"
+            },
+            "30-59": {
+              "total": 20238,
+              "label": "30-59 años"
+            },
+            "60+": {
+              "total": 6327,
+              "label": "60 años y más"
+            }
+          },
+          "discapacidad": {
+            "total": 1695,
+            "porcentaje": 3.44
+          },
+          "manzanas_count": 959,
+          "buffer_distance_m": 700,
+          "network_analysis": true
+        }
+      },
+      "analyzed_at": "2025-12-26T11:36:35.521067"
+    },
+    {
+      "id": "1a18509a",
+      "filename": "08_ZAP_C_Zapotlan-San_Pedro_Huaquilpan.gpx",
+      "nombre": "Zapotlan-San Pedro-Huaquilpan",
+      "municipio": "Zapotlán de Juárez",
+      "modalidad": "Público",
+      "clave_mnemotecnica": "08 ZAP C",
+      "uploaded_at": "2025-12-24T12:21:23.834737",
+      "analyzed": true,
+      "points_count": 396,
+      "bounds": [
+        -98.874555,
+        19.97069667,
+        -98.85459833,
+        19.99077167
+      ],
+      "analysis": {
+        "duracion_min": 33,
+        "distancia_km": 7.945,
+        "distancia_rnc_km": 3.3,
+        "puntos_totales": 396,
+        "velocidad_promedio_kmh": 20.8,
+        "velocidad_maxima_kmh": 112.8,
+        "elevacion_min_m": 2343.8,
+        "elevacion_max_m": 2425.0,
+        "ganancia_elevacion_m": 135.1,
+        "perdida_elevacion_m": 131.3,
+        "pendiente_promedio_subida": 5.52,
+        "pendiente_promedio_bajada": -5.69,
+        "pendiente_maxima": 24.62,
+        "superficie": {
+          "Con pavimento": 3.3
+        },
+        "administracion": {
+          "Municipal": 3.3
+        },
+        "tipo_vialidad": {
+          "Avenida": 3.3
+        },
+        "municipios_atravesados": [
+          {
+            "cve_mun": "082",
+            "nombre": "Zapotlán de Juárez",
+            "cvegeo": "13082",
+            "localidades_urbanas": [
+              {
+                "cvegeo": "130820003",
+                "nombre": "San Pedro Huaquilpan",
+                "cve_mun": "082",
+                "ambito": "Urbana",
+                "distancia_red_m": 418.5
+              },
+              {
+                "cvegeo": "130820001",
+                "nombre": "Zapotlán de Juárez",
+                "cve_mun": "082",
+                "ambito": "Urbana",
+                "distancia_red_m": 395.3
+              }
+            ],
+            "localidades_rurales": []
+          }
+        ],
+        "num_municipios": 1,
+        "localidades_urbanas": 2,
+        "localidades_rurales": 0,
+        "total_localidades": 2,
+        "confianza_matching": 88.4,
+        "match_rate_pct": 41.7,
+        "distancia_promedio_match_m": 5.8,
+        "puntos_sin_match": 231,
+        "area_servicio": {
+          "poblacion_total": 3692,
+          "poblacion_femenina": 1908,
+          "poblacion_masculina": 1748,
+          "piramide_poblacional": {
+            "0-14": {
+              "total": 728,
+              "label": "0-14 años"
+            },
+            "15-29": {
+              "total": 862,
+              "label": "15-29 años"
+            },
+            "30-59": {
+              "total": 1472,
+              "label": "30-59 años"
+            },
+            "60+": {
+              "total": 575,
+              "label": "60 años y más"
+            }
+          },
+          "discapacidad": {
+            "total": 202,
+            "porcentaje": 5.47
+          },
+          "manzanas_count": 70,
+          "buffer_distance_m": 700,
+          "network_analysis": true
+        }
+      },
+      "analyzed_at": "2025-12-26T11:36:42.848528"
+    }
+  ]
+}

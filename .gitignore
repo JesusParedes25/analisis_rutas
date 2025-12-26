@@ -1,0 +1,43 @@
+# Dependencies
+frontend/node_modules/
+backend/venv/
+backend/__pycache__/
+backend/services/__pycache__/
+
+# Uploads and results (generated at runtime)
+uploads/
+results/
+backend/uploads/
+backend/results/
+
+# Keep data files for deployment (tracked with Git LFS)
+# backend/data/ - NOT ignored, we need this for deployment
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build outputs
+frontend/build/
+*.pyc
+*.pyo
+
+# Logs
+*.log
+npm-debug.log*
+
+# Test coverage
+coverage/
+.coverage
+htmlcov/

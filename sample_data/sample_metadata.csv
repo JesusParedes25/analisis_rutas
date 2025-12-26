@@ -1,0 +1,5 @@
+archivo,nombre,municipio,modalidad,clave_mnemotecnica
+sample_route.gpx,Ruta Centro-Norte,Aguascalientes,Público,RUT-001
+ruta_sur.gpx,Ruta Sur-Poniente,Aguascalientes,Público,RUT-002
+ruta_foranea.gpx,Ruta Turística Calvillo,Calvillo,Turístico,TUR-001
+ruta_escolar.gpx,Ruta Escolar San José,Jesús María,Escolar,ESC-001
