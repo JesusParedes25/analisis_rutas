@@ -44,10 +44,16 @@ export const uploadRoute = (file, metadata, onProgress) => {
     onUploadProgress: onProgress
   });
 };
-export const uploadRoutesBatch = (zipFile, csvFile, onProgress) => {
+export const uploadRoutesBatch = (zipFile, csvFile, defaultMetadata, onProgress) => {
   const formData = new FormData();
   formData.append('file', zipFile);
   if (csvFile) formData.append('metadata', csvFile);
+  // Add default metadata for all routes in ZIP
+  if (defaultMetadata) {
+    Object.keys(defaultMetadata).forEach(key => {
+      if (defaultMetadata[key]) formData.append(key, defaultMetadata[key]);
+    });
+  }
   return api.post('/routes/batch', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
     onUploadProgress: onProgress

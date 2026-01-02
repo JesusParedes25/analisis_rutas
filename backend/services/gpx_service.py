@@ -50,11 +50,14 @@ class GPXService:
         
         return {'success': True, 'route': route}
     
-    def save_gpx_batch(self, zip_file, csv_file=None):
+    def save_gpx_batch(self, zip_file, csv_file=None, default_metadata=None):
         """Save multiple GPX files from a ZIP"""
         temp_dir = tempfile.mkdtemp()
         routes = []
         errors = []
+        
+        if default_metadata is None:
+            default_metadata = {}
         
         try:
             # Extract ZIP
@@ -79,7 +82,8 @@ class GPXService:
                         
                         # Get metadata for this file
                         base_name = filename.replace('.gpx', '').replace('.GPX', '')
-                        metadata = metadata_map.get(base_name, {})
+                        # Merge: CSV metadata overrides default metadata
+                        metadata = {**default_metadata, **metadata_map.get(base_name, {})}
                         
                         route_id = str(uuid.uuid4())[:8]
                         

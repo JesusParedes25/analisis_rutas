@@ -218,8 +218,15 @@ def upload_routes_batch():
     zip_file = request.files['file']
     csv_file = request.files.get('metadata')
     
+    # Get default metadata from form
+    default_metadata = {
+        'municipio': request.form.get('municipio', ''),
+        'modalidad': request.form.get('modalidad', ''),
+        'clave_mnemotecnica': request.form.get('clave_mnemotecnica', '')
+    }
+    
     try:
-        result = gpx_service.save_gpx_batch(zip_file, csv_file)
+        result = gpx_service.save_gpx_batch(zip_file, csv_file, default_metadata)
         
         if result['success']:
             db = load_routes_db()

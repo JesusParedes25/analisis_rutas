@@ -16,6 +16,11 @@ function RoutesModule({ onViewRoute }) {
     modalidad: '',
     clave_mnemotecnica: ''
   });
+  const [batchFormData, setBatchFormData] = useState({
+    municipio: '',
+    modalidad: '',
+    clave_mnemotecnica: ''
+  });
   const [editingRoute, setEditingRoute] = useState(null);
   const [editFormData, setEditFormData] = useState({
     nombre: '',
@@ -96,7 +101,7 @@ function RoutesModule({ onViewRoute }) {
     setMessage(null);
 
     try {
-      const res = await uploadRoutesBatch(zipFile, csvFile);
+      const res = await uploadRoutesBatch(zipFile, csvFile, batchFormData);
       if (res.data.success) {
         const errorCount = res.data.errors?.length || 0;
         setMessage({ 
@@ -271,9 +276,44 @@ function RoutesModule({ onViewRoute }) {
             <div className="alert alert-info mb-2">
               <FileSpreadsheet className="w-5 h-5" />
               <div>
-                <strong>Subida masiva:</strong> Selecciona un archivo ZIP con los GPX y opcionalmente un CSV con metadatos.
+                <strong>Subida masiva:</strong> Selecciona metadatos para aplicar a todas las rutas del ZIP.
                 <br />
-                <small>El CSV debe tener columnas: archivo, nombre, municipio, modalidad, clave_mnemotecnica</small>
+                <small>Opcionalmente, agrega un CSV para especificar metadatos individuales por archivo.</small>
+              </div>
+            </div>
+            
+            <div className="form-grid mb-3">
+              <div className="form-group">
+                <label className="form-label">Municipio (aplica a todas)</label>
+                <select
+                  className="form-select"
+                  value={batchFormData.municipio}
+                  onChange={(e) => setBatchFormData({ ...batchFormData, municipio: e.target.value })}
+                >
+                  <option value="">Seleccionar municipio...</option>
+                  {municipios.map(m => <option key={m} value={m}>{m}</option>)}
+                </select>
+              </div>
+              <div className="form-group">
+                <label className="form-label">Modalidad (aplica a todas)</label>
+                <select
+                  className="form-select"
+                  value={batchFormData.modalidad}
+                  onChange={(e) => setBatchFormData({ ...batchFormData, modalidad: e.target.value })}
+                >
+                  <option value="">Seleccionar...</option>
+                  {modalidades.map(m => <option key={m} value={m}>{m}</option>)}
+                </select>
+              </div>
+              <div className="form-group">
+                <label className="form-label">Clave Mnemotécnica</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  value={batchFormData.clave_mnemotecnica}
+                  onChange={(e) => setBatchFormData({ ...batchFormData, clave_mnemotecnica: e.target.value })}
+                  placeholder="Ej: RUT-LOTE-001"
+                />
               </div>
             </div>
             
