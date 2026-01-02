@@ -108,9 +108,13 @@ class LocalityDetector:
             
             # Agregar localidad al municipio correspondiente
             if cve_mun and cve_mun in municipios_data:
-                if ambito == 'Urbana':
+                ambito_lower = ambito.lower()
+                if ambito_lower in ['urbana', 'u', 'urbano']:
                     municipios_data[cve_mun]['localidades_urbanas'].append(loc_data)
-                elif ambito == 'Rural':
+                elif ambito_lower in ['rural', 'r']:
+                    municipios_data[cve_mun]['localidades_rurales'].append(loc_data)
+                else:
+                    # Default to rural if unknown
                     municipios_data[cve_mun]['localidades_rurales'].append(loc_data)
         
         # Convertir a lista ordenada
@@ -225,9 +229,13 @@ class LocalityDetector:
             
             # Add locality to municipality
             if cve_mun and cve_mun in municipios_data:
-                if ambito == 'Urbana':
+                ambito_lower = ambito.lower()
+                if ambito_lower in ['urbana', 'u', 'urbano']:
                     municipios_data[cve_mun]['localidades_urbanas'].append(loc_data)
-                elif ambito == 'Rural':
+                elif ambito_lower in ['rural', 'r']:
+                    municipios_data[cve_mun]['localidades_rurales'].append(loc_data)
+                else:
+                    # Default to rural if unknown
                     municipios_data[cve_mun]['localidades_rurales'].append(loc_data)
         
         # Convert to sorted list

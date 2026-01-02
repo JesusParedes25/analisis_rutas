@@ -89,8 +89,9 @@ def set_buffer():
 
 @app.route('/api/config/shapefile/<shapefile_type>', methods=['POST'])
 def upload_shapefile(shapefile_type):
-    """Upload a base shapefile (road_network, municipalities, localities, manzanas)"""
-    if shapefile_type not in ['road_network', 'municipalities', 'localities', 'manzanas']:
+    """Upload a base shapefile (road_network, municipalities, localities, manzanas, sites)"""
+    valid_types = ['road_network', 'municipalities', 'localities', 'manzanas', 'sites_public', 'sites_private']
+    if shapefile_type not in valid_types:
         return jsonify({'error': 'Invalid shapefile type'}), 400
     
     if 'file' not in request.files:
@@ -120,7 +121,8 @@ def upload_shapefile(shapefile_type):
 @app.route('/api/config/shapefile/<shapefile_type>/preview', methods=['GET'])
 def preview_shapefile(shapefile_type):
     """Get GeoJSON preview of a shapefile"""
-    if shapefile_type not in ['road_network', 'municipalities', 'localities', 'manzanas']:
+    valid_types = ['road_network', 'municipalities', 'localities', 'manzanas', 'sites_public', 'sites_private']
+    if shapefile_type not in valid_types:
         return jsonify({'error': 'Invalid shapefile type'}), 400
     
     config = load_config()

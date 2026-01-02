@@ -61,56 +61,56 @@
                 "nombre": "Bosques del Mineral",
                 "cve_mun": "051",
                 "ambito": "Urbana",
-                "distancia_red_m": 441.2
+                "distancia_red_m": 440.2
               },
               {
                 "cvegeo": "130510110",
                 "nombre": "Los Pinos",
                 "cve_mun": "051",
                 "ambito": "Urbana",
-                "distancia_red_m": 359.1
+                "distancia_red_m": 320.9
               },
               {
                 "cvegeo": "130510123",
                 "nombre": "Privada Quinta Bonita",
                 "cve_mun": "051",
                 "ambito": "Urbana",
-                "distancia_red_m": 202.7
+                "distancia_red_m": 202.9
               },
               {
                 "cvegeo": "130510130",
                 "nombre": "Rinconadas de San Francisco",
                 "cve_mun": "051",
                 "ambito": "Urbana",
-                "distancia_red_m": 481.6
+                "distancia_red_m": 481.5
               },
               {
                 "cvegeo": "130510132",
-                "nombre": "Rincones del Paraíso",
+                "nombre": "Rincones del ParaÃ­so",
                 "cve_mun": "051",
                 "ambito": "Urbana",
-                "distancia_red_m": 114.5
+                "distancia_red_m": 96.3
               },
               {
                 "cvegeo": "130510141",
                 "nombre": "Tulipanes",
                 "cve_mun": "051",
                 "ambito": "Urbana",
-                "distancia_red_m": 613.5
+                "distancia_red_m": 647.8
               },
               {
                 "cvegeo": "130510142",
                 "nombre": "Paseo de los Tulipanes",
                 "cve_mun": "051",
                 "ambito": "Urbana",
-                "distancia_red_m": 698.8
+                "distancia_red_m": 699.5
               },
               {
                 "cvegeo": "130510145",
                 "nombre": "Valle Dorado",
                 "cve_mun": "051",
                 "ambito": "Urbana",
-                "distancia_red_m": 86.8
+                "distancia_red_m": 83.0
               }
             ],
             "localidades_rurales": []
@@ -129,21 +129,13 @@
             "localidades_urbanas": [
               {
                 "cvegeo": "130820001",
-                "nombre": "Zapotlán de Juárez",
+                "nombre": "ZapotlÃ¡n de JuÃ¡rez",
                 "cve_mun": "082",
                 "ambito": "Urbana",
                 "distancia_red_m": 354.4
               }
             ],
-            "localidades_rurales": [
-              {
-                "cvegeo": "130820042",
-                "nombre": "Real Bilbao [Fraccionamiento]",
-                "cve_mun": "082",
-                "ambito": "Rural",
-                "distancia_red_m": 429.0
-              }
-            ]
+            "localidades_rurales": []
           },
           {
             "cve_mun": "083",
@@ -155,44 +147,44 @@
         ],
         "num_municipios": 4,
         "localidades_urbanas": 9,
-        "localidades_rurales": 1,
-        "total_localidades": 10,
+        "localidades_rurales": 0,
+        "total_localidades": 9,
         "confianza_matching": 93.1,
         "match_rate_pct": 99.5,
         "distancia_promedio_match_m": 3.5,
         "puntos_sin_match": 14,
         "area_servicio": {
-          "poblacion_total": 35298,
-          "poblacion_femenina": 18493,
-          "poblacion_masculina": 16468,
+          "poblacion_total": 36983,
+          "poblacion_femenina": 19332,
+          "poblacion_masculina": 17291,
           "piramide_poblacional": {
             "0-14": {
-              "total": 6690,
+              "total": 6968,
               "label": "0-14 años"
             },
             "15-29": {
-              "total": 8902,
+              "total": 9326,
               "label": "15-29 años"
             },
             "30-59": {
-              "total": 14819,
+              "total": 15536,
               "label": "30-59 años"
             },
             "60+": {
-              "total": 4042,
+              "total": 4279,
               "label": "60 años y más"
             }
           },
           "discapacidad": {
-            "total": 1079,
-            "porcentaje": 3.06
+            "total": 1137,
+            "porcentaje": 3.07
           },
-          "manzanas_count": 693,
+          "manzanas_count": 710,
           "buffer_distance_m": 700,
           "network_analysis": true
         }
       },
-      "analyzed_at": "2025-12-26T11:35:40.508145"
+      "analyzed_at": "2025-12-29T13:37:00.165596"
     },
     {
       "id": "a0542a02",

@@ -1,8 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { ArrowLeft, Play, Download, MapPin, Clock, Gauge, Mountain, Building2, Home, CheckCircle, Users, Accessibility } from 'lucide-react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { ArrowLeft, Play, Download, MapPin, Clock, Gauge, Mountain, Building2, Home, CheckCircle, Users, Accessibility, Bus, Car, FileText } from 'lucide-react';
 import { MapContainer, TileLayer, GeoJSON, useMap, LayersControl } from 'react-leaflet';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { getRouteGPX, getAnalysisResults, analyzeRoute, getShapefilePreview } from '../api';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 import 'leaflet/dist/leaflet.css';
 
 const { Overlay } = LayersControl;
@@ -27,12 +29,18 @@ function RouteDetailModule({ route, onBack }) {
   const [municipiosData, setMunicipiosData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [analyzing, setAnalyzing] = useState(false);
+  const [sitesPublicData, setSitesPublicData] = useState(null);
+  const [sitesPrivateData, setSitesPrivateData] = useState(null);
+  const [generatingPDF, setGeneratingPDF] = useState(false);
   const [layers, setLayers] = useState({
     gpxOriginal: true,
     matchedRoads: true,
     municipalities: false,
-    localities: false
+    sitesPublic: true,
+    sitesPrivate: true
   });
+  const mapRef = useRef(null);
+  const reportRef = useRef(null);
 
   const loadData = useCallback(async () => {
     if (!route) return;
@@ -53,6 +61,16 @@ function RouteDetailModule({ route, onBack }) {
       try {
         const munRes = await getShapefilePreview('municipalities');
         setMunicipiosData(munRes.data);
+      } catch (e) {}
+
+      // Load sites data
+      try {
+        const sitesPublicRes = await getShapefilePreview('sites_public');
+        setSitesPublicData(sitesPublicRes.data);
+      } catch (e) {}
+      try {
+        const sitesPrivateRes = await getShapefilePreview('sites_private');
+        setSitesPrivateData(sitesPrivateRes.data);
       } catch (e) {}
     } catch (err) {
       console.error('Error loading route data:', err);
@@ -82,6 +100,308 @@ function RouteDetailModule({ route, onBack }) {
   };
 
   const analysis = route?.analysis || analysisResults?.analysis;
+
+  // PDF Generation function - captures actual page sections
+  const generatePDF = async () => {
+    if (!analysis) return;
+    
+    setGeneratingPDF(true);
+    try {
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const margin = 10;
+
+      // Helper to add image from element with proper scaling
+      const addElementToPDF = async (selector, yPosition = null) => {
+        const element = document.querySelector(selector);
+        if (!element) return 0;
+        
+        try {
+          const canvas = await html2canvas(element, {
+            useCORS: true,
+            allowTaint: true,
+            scale: 2,
+            logging: false,
+            backgroundColor: '#ffffff'
+          });
+          
+          const imgData = canvas.toDataURL('image/png');
+          const imgWidth = pageWidth - 2 * margin;
+          const imgHeight = (canvas.height * imgWidth) / canvas.width;
+          
+          return { imgData, imgWidth, imgHeight };
+        } catch (e) {
+          console.error('Error capturing element:', e);
+          return null;
+        }
+      };
+
+      // Page 1: Header + Stats + Map
+      // Header
+      pdf.setFillColor(30, 64, 175);
+      pdf.rect(0, 0, pageWidth, 22, 'F');
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(16);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('FICHA TECNICA DE RUTA', margin, 14);
+      
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'normal');
+      const dateStr = new Date().toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' });
+      pdf.text(dateStr, pageWidth - margin - pdf.getTextWidth(dateStr), 14);
+
+      let yPos = 28;
+
+      // Route title section
+      pdf.setFontSize(14);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setTextColor(17, 24, 39);
+      pdf.text(route.nombre || 'Ruta sin nombre', margin, yPos);
+      yPos += 6;
+
+      pdf.setFontSize(9);
+      pdf.setFont('helvetica', 'normal');
+      pdf.setTextColor(107, 114, 128);
+      const subtitles = [route.municipio, route.modalidad, route.clave_mnemotecnica].filter(Boolean).join(' | ');
+      pdf.text(subtitles, margin, yPos);
+      yPos += 8;
+
+      // Capture stats grid
+      const statsGrid = document.querySelector('.stats-grid');
+      if (statsGrid) {
+        const statsResult = await addElementToPDF('.stats-grid');
+        if (statsResult) {
+          const scaledHeight = Math.min(statsResult.imgHeight, 25);
+          pdf.addImage(statsResult.imgData, 'PNG', margin, yPos, statsResult.imgWidth, scaledHeight);
+          yPos += scaledHeight + 5;
+        }
+      }
+
+      // Capture the map
+      const mapElement = document.querySelector('.map-container');
+      if (mapElement && route.bounds) {
+        // Ensure map is fitted to route
+        if (mapRef.current) {
+          const routeBounds = [
+            [route.bounds[1], route.bounds[0]],
+            [route.bounds[3], route.bounds[2]]
+          ];
+          mapRef.current.fitBounds(routeBounds, { padding: [20, 20], animate: false });
+          await new Promise(resolve => setTimeout(resolve, 800));
+        }
+        
+        const mapResult = await addElementToPDF('.map-container');
+        if (mapResult) {
+          const mapHeight = Math.min(mapResult.imgHeight, 80);
+          pdf.addImage(mapResult.imgData, 'PNG', margin, yPos, mapResult.imgWidth, mapHeight);
+          yPos += mapHeight + 5;
+        }
+      }
+
+      // Page 2: Charts and details
+      pdf.addPage();
+      yPos = margin;
+
+      // Capture chart sections
+      const chartContainers = document.querySelectorAll('.chart-container');
+      for (let i = 0; i < Math.min(chartContainers.length, 2); i++) {
+        try {
+          const canvas = await html2canvas(chartContainers[i].parentElement, {
+            useCORS: true,
+            scale: 2,
+            logging: false,
+            backgroundColor: '#ffffff'
+          });
+          const imgData = canvas.toDataURL('image/png');
+          const imgWidth = (pageWidth - 3 * margin) / 2;
+          const imgHeight = (canvas.height * imgWidth) / canvas.width;
+          const xPos = margin + i * (imgWidth + margin);
+          pdf.addImage(imgData, 'PNG', xPos, yPos, imgWidth, Math.min(imgHeight, 60));
+        } catch (e) {}
+      }
+      yPos += 65;
+
+      // Capture cards (municipalities, localities)
+      const cards = document.querySelectorAll('.card');
+      for (let i = 0; i < Math.min(cards.length, 4); i++) {
+        if (yPos + 50 > pageHeight - margin) {
+          pdf.addPage();
+          yPos = margin;
+        }
+        try {
+          const canvas = await html2canvas(cards[i], {
+            useCORS: true,
+            scale: 2,
+            logging: false,
+            backgroundColor: '#ffffff'
+          });
+          const imgData = canvas.toDataURL('image/png');
+          const imgWidth = pageWidth - 2 * margin;
+          const imgHeight = (canvas.height * imgWidth) / canvas.width;
+          pdf.addImage(imgData, 'PNG', margin, yPos, imgWidth, Math.min(imgHeight, 70));
+          yPos += Math.min(imgHeight, 70) + 5;
+        } catch (e) {}
+      }
+
+      // Page for Sites with satellite zoom
+      const allSites = [
+        ...(sitesPublicData?.features || []).map(f => ({ ...f, siteType: 'public' })),
+        ...(sitesPrivateData?.features || []).map(f => ({ ...f, siteType: 'private' }))
+      ];
+
+      if (allSites.length > 0) {
+        const googleApiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
+        
+        pdf.addPage();
+        
+        // Header for sites page
+        pdf.setFillColor(245, 158, 11);
+        pdf.rect(0, 0, pageWidth, 18, 'F');
+        pdf.setTextColor(255, 255, 255);
+        pdf.setFontSize(12);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('BASES / SITIOS DE TRANSPORTE', margin, 12);
+        yPos = 25;
+
+        // Switch to satellite with max zoom
+        const layerControl = document.querySelector('.leaflet-control-layers');
+        const satelliteRadio = layerControl?.querySelectorAll('input[type="radio"]')[1];
+        if (satelliteRadio) {
+          satelliteRadio.click();
+          await new Promise(resolve => setTimeout(resolve, 600));
+        }
+
+        for (let idx = 0; idx < Math.min(allSites.length, 6); idx++) {
+          const site = allSites[idx];
+          const props = site.properties || {};
+          const name = props.Name || props.name || props.NOMBRE || props.nombre || `Sitio ${idx + 1}`;
+          const isPublic = site.siteType === 'public';
+          const color = isPublic ? [245, 158, 11] : [239, 68, 68];
+          
+          let coords = site.geometry?.coordinates;
+          if (!coords) continue;
+          if (Array.isArray(coords[0])) coords = coords[0];
+          const [lng, lat] = coords;
+          if (typeof lat !== 'number' || typeof lng !== 'number') continue;
+
+          // Each site needs about 120mm (satellite + street view)
+          if (yPos + 120 > pageHeight - margin) {
+            pdf.addPage();
+            yPos = margin;
+          }
+
+          // Card background
+          const cardHeight = googleApiKey ? 115 : 65;
+          pdf.setFillColor(250, 250, 250);
+          pdf.roundedRect(margin, yPos - 3, pageWidth - 2 * margin, cardHeight, 2, 2, 'F');
+          
+          // Color indicator
+          pdf.setFillColor(...color);
+          pdf.roundedRect(margin, yPos - 3, 4, cardHeight, 1, 1, 'F');
+
+          // Site name and type
+          pdf.setFontSize(11);
+          pdf.setFont('helvetica', 'bold');
+          pdf.setTextColor(17, 24, 39);
+          pdf.text(name, margin + 10, yPos + 6);
+          
+          // Type badge
+          pdf.setFillColor(...color);
+          pdf.roundedRect(margin + 10 + pdf.getTextWidth(name) + 4, yPos + 1, 24, 6, 1, 1, 'F');
+          pdf.setFontSize(7);
+          pdf.setTextColor(255, 255, 255);
+          pdf.text(isPublic ? 'PUBLICO' : 'PRIVADO', margin + 10 + pdf.getTextWidth(name) + 7, yPos + 5);
+
+          // Coordinates
+          pdf.setFontSize(8);
+          pdf.setFont('helvetica', 'normal');
+          pdf.setTextColor(100, 100, 100);
+          pdf.text(`Coordenadas: ${lat.toFixed(6)}, ${lng.toFixed(6)}`, margin + 10, yPos + 13);
+
+          // Satellite image with zoom 20 and proper aspect ratio
+          if (mapRef.current) {
+            mapRef.current.setView([lat, lng], 20, { animate: false });
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            try {
+              const mapEl = document.querySelector('.map-container');
+              const canvas = await html2canvas(mapEl, {
+                useCORS: true,
+                allowTaint: true,
+                scale: 2,
+                logging: false
+              });
+              const imgData = canvas.toDataURL('image/png');
+              // Maintain aspect ratio
+              const origRatio = canvas.width / canvas.height;
+              const imgWidth = (pageWidth - 2 * margin - 20) / 2;
+              const imgHeight = imgWidth / origRatio;
+              
+              pdf.setFontSize(7);
+              pdf.setTextColor(120, 120, 120);
+              pdf.text('Vista Satelital:', margin + 10, yPos + 19);
+              pdf.addImage(imgData, 'PNG', margin + 10, yPos + 21, imgWidth, Math.min(imgHeight, 40));
+              
+              // Google Street View image
+              if (googleApiKey) {
+                const streetViewUrl = `https://maps.googleapis.com/maps/api/streetview?size=600x400&location=${lat},${lng}&fov=90&heading=0&pitch=0&key=${googleApiKey}`;
+                
+                pdf.text('Street View:', margin + 15 + imgWidth, yPos + 19);
+                
+                // Load Street View image
+                try {
+                  const response = await fetch(streetViewUrl);
+                  const blob = await response.blob();
+                  const reader = new FileReader();
+                  const streetViewImg = await new Promise((resolve, reject) => {
+                    reader.onloadend = () => resolve(reader.result);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(blob);
+                  });
+                  
+                  pdf.addImage(streetViewImg, 'JPEG', margin + 15 + imgWidth, yPos + 21, imgWidth, Math.min(imgHeight, 40));
+                } catch (svErr) {
+                  pdf.setFontSize(7);
+                  pdf.setTextColor(180, 180, 180);
+                  pdf.text('Street View no disponible', margin + 20 + imgWidth, yPos + 40);
+                }
+              }
+            } catch (e) {
+              pdf.setTextColor(180, 180, 180);
+              pdf.text('Imagen no disponible', margin + 50, yPos + 35);
+            }
+          }
+
+          yPos += cardHeight + 8;
+        }
+
+        // Restore map
+        const osmRadio = layerControl?.querySelectorAll('input[type="radio"]')[0];
+        if (osmRadio) osmRadio.click();
+        
+        if (route.bounds && mapRef.current) {
+          const routeBounds = [[route.bounds[1], route.bounds[0]], [route.bounds[3], route.bounds[2]]];
+          mapRef.current.fitBounds(routeBounds, { padding: [20, 20] });
+        }
+      }
+
+      // Footer on last page
+      pdf.setFontSize(7);
+      pdf.setTextColor(150, 150, 150);
+      pdf.text('Plataforma de Analisis de Rutas GPX', margin, pageHeight - 5);
+
+      // Save
+      const fileName = `Ficha_${route.nombre?.replace(/[^a-zA-Z0-9]/g, '_') || route.id}.pdf`;
+      pdf.save(fileName);
+      
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      alert('Error al generar el PDF. Por favor intenta de nuevo.');
+    } finally {
+      setGeneratingPDF(false);
+    }
+  };
 
   const surfaceData = analysis ? [
     { name: 'Pavimentado', value: analysis.superficie?.['Con pavimento'] || analysis.superficie?.pavimentado_km || 0, color: '#3b82f6' },
@@ -123,20 +443,39 @@ function RouteDetailModule({ route, onBack }) {
           {route.analyzed ? <CheckCircle className="w-5 h-5" /> : <Clock className="w-5 h-5" />}
           <div className="flex items-center justify-between" style={{ flex: 1 }}>
             <span>{route.analyzed ? 'Ruta analizada' : 'Esta ruta no ha sido analizada aún'}</span>
-            <button
-              className={`btn ${route.analyzed ? 'btn-secondary' : 'btn-primary'} btn-sm`}
-              onClick={handleAnalyze}
-              disabled={analyzing}
-            >
-              {analyzing ? (
-                <div className="spinner" style={{ width: '14px', height: '14px', borderWidth: '2px' }} />
-              ) : (
-                <>
-                  <Play className="w-4 h-4" />
-                  {route.analyzed ? 'Re-analizar' : 'Analizar ahora'}
-                </>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <button
+                className={`btn ${route.analyzed ? 'btn-secondary' : 'btn-primary'} btn-sm`}
+                onClick={handleAnalyze}
+                disabled={analyzing}
+              >
+                {analyzing ? (
+                  <div className="spinner" style={{ width: '14px', height: '14px', borderWidth: '2px' }} />
+                ) : (
+                  <>
+                    <Play className="w-4 h-4" />
+                    {route.analyzed ? 'Re-analizar' : 'Analizar ahora'}
+                  </>
+                )}
+              </button>
+              {analysis && (
+                <button
+                  className="btn btn-primary btn-sm"
+                  onClick={generatePDF}
+                  disabled={generatingPDF}
+                  style={{ backgroundColor: '#059669' }}
+                >
+                  {generatingPDF ? (
+                    <div className="spinner" style={{ width: '14px', height: '14px', borderWidth: '2px' }} />
+                  ) : (
+                    <>
+                      <FileText className="w-4 h-4" />
+                      Generar Ficha PDF
+                    </>
+                  )}
+                </button>
               )}
-            </button>
+            </div>
           </div>
         </div>
 
@@ -161,11 +500,10 @@ function RouteDetailModule({ route, onBack }) {
         </div>
       )}
 
-      <div className="grid-2">
-        <div className="card">
-          <div className="card-header">
-            <span className="card-title">Mapa de la Ruta</span>
-          </div>
+      <div className="card">
+        <div className="card-header">
+          <span className="card-title">Mapa de la Ruta</span>
+        </div>
           
           <div className="layer-controls">
             <label className="layer-control-item">
@@ -199,6 +537,28 @@ function RouteDetailModule({ route, onBack }) {
                 <span>Municipios</span>
               </label>
             )}
+            {sitesPublicData && (
+              <label className="layer-control-item">
+                <input
+                  type="checkbox"
+                  checked={layers.sitesPublic}
+                  onChange={(e) => setLayers({ ...layers, sitesPublic: e.target.checked })}
+                />
+                <span className="legend-color" style={{ background: '#f59e0b', borderRadius: '50%' }} />
+                <span>Bases Públicas</span>
+              </label>
+            )}
+            {sitesPrivateData && (
+              <label className="layer-control-item">
+                <input
+                  type="checkbox"
+                  checked={layers.sitesPrivate}
+                  onChange={(e) => setLayers({ ...layers, sitesPrivate: e.target.checked })}
+                />
+                <span className="legend-color" style={{ background: '#ef4444', borderRadius: '50%' }} />
+                <span>Bases Privadas</span>
+              </label>
+            )}
           </div>
 
           <div className="map-container">
@@ -206,11 +566,22 @@ function RouteDetailModule({ route, onBack }) {
               center={[23.6345, -102.5528]}
               zoom={10}
               style={{ height: '100%', width: '100%' }}
+              ref={mapRef}
             >
-              <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              />
+              <LayersControl position="topright">
+                <LayersControl.BaseLayer checked name="OpenStreetMap">
+                  <TileLayer
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  />
+                </LayersControl.BaseLayer>
+                <LayersControl.BaseLayer name="Satélite">
+                  <TileLayer
+                    attribution='&copy; Esri'
+                    url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                  />
+                </LayersControl.BaseLayer>
+              </LayersControl>
               
               {layers.municipalities && municipiosData && (
                 <GeoJSON
@@ -244,59 +615,74 @@ function RouteDetailModule({ route, onBack }) {
                   })}
                 />
               )}
+
+              {/* Sites - Public Transport */}
+              {layers.sitesPublic && sitesPublicData && (
+                <GeoJSON
+                  data={sitesPublicData}
+                  pointToLayer={(feature, latlng) => {
+                    return window.L.circleMarker(latlng, {
+                      radius: 8,
+                      fillColor: '#f59e0b',
+                      color: '#b45309',
+                      weight: 2,
+                      opacity: 1,
+                      fillOpacity: 0.9
+                    });
+                  }}
+                  onEachFeature={(feature, layer) => {
+                    const props = feature.properties;
+                    const name = props.Name || props.name || props.NOMBRE || props.nombre || 'Base Pública';
+                    const coords = feature.geometry.coordinates;
+                    const lat = coords[1];
+                    const lng = coords[0];
+                    const streetViewUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${lat},${lng}`;
+                    layer.bindPopup(`
+                      <strong>🚌 ${name}</strong><br/>
+                      <span style="color:#666">Transporte Público</span><br/>
+                      <a href="${streetViewUrl}" target="_blank" rel="noopener" style="color:#3b82f6;font-size:12px;text-decoration:none;">
+                        📍 Ver en Street View
+                      </a>
+                    `);
+                  }}
+                />
+              )}
+
+              {/* Sites - Private Transport */}
+              {layers.sitesPrivate && sitesPrivateData && (
+                <GeoJSON
+                  data={sitesPrivateData}
+                  pointToLayer={(feature, latlng) => {
+                    return window.L.circleMarker(latlng, {
+                      radius: 8,
+                      fillColor: '#ef4444',
+                      color: '#b91c1c',
+                      weight: 2,
+                      opacity: 1,
+                      fillOpacity: 0.9
+                    });
+                  }}
+                  onEachFeature={(feature, layer) => {
+                    const props = feature.properties;
+                    const name = props.Name || props.name || props.NOMBRE || props.nombre || 'Base Privada';
+                    const coords = feature.geometry.coordinates;
+                    const lat = coords[1];
+                    const lng = coords[0];
+                    const streetViewUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${lat},${lng}`;
+                    layer.bindPopup(`
+                      <strong>🚗 ${name}</strong><br/>
+                      <span style="color:#666">Transporte Privado</span><br/>
+                      <a href="${streetViewUrl}" target="_blank" rel="noopener" style="color:#3b82f6;font-size:12px;text-decoration:none;">
+                        📍 Ver en Street View
+                      </a>
+                    `);
+                  }}
+                />
+              )}
               
               {route.bounds && <FitBounds bounds={route.bounds} />}
             </MapContainer>
           </div>
-        </div>
-
-        {analysis && (
-          <div>
-            <div className="card">
-              <div className="card-header">
-                <span className="card-title">Métricas de Elevación</span>
-              </div>
-              <div className="metric-grid">
-                <div className="metric-item">
-                  <Mountain className="w-5 h-5" style={{ color: '#3b82f6', margin: '0 auto 0.5rem' }} />
-                  <div className="metric-value">{analysis.elevacion_min_m?.toFixed(0)}</div>
-                  <div className="metric-label">Elevación Mín (m)</div>
-                </div>
-                <div className="metric-item">
-                  <Mountain className="w-5 h-5" style={{ color: '#ef4444', margin: '0 auto 0.5rem' }} />
-                  <div className="metric-value">{analysis.elevacion_max_m?.toFixed(0)}</div>
-                  <div className="metric-label">Elevación Máx (m)</div>
-                </div>
-                <div className="metric-item">
-                  <div className="metric-value" style={{ color: '#10b981' }}>+{analysis.ganancia_elevacion_m?.toFixed(0)}</div>
-                  <div className="metric-label">Ganancia (m)</div>
-                </div>
-                <div className="metric-item">
-                  <div className="metric-value" style={{ color: '#ef4444' }}>-{analysis.perdida_elevacion_m?.toFixed(0)}</div>
-                  <div className="metric-label">Pérdida (m)</div>
-                </div>
-              </div>
-            </div>
-
-            <div className="card">
-              <div className="card-header">
-                <span className="card-title">Confianza del Análisis</span>
-              </div>
-              <div className="progress-bar" style={{ height: '12px' }}>
-                <div 
-                  className="progress-fill" 
-                  style={{ 
-                    width: `${analysis.confianza_matching || 0}%`,
-                    background: analysis.confianza_matching > 70 ? '#10b981' : analysis.confianza_matching > 40 ? '#f59e0b' : '#ef4444'
-                  }} 
-                />
-              </div>
-              <p className="text-center mt-1" style={{ fontSize: '0.875rem', color: '#6b7280' }}>
-                {analysis.confianza_matching?.toFixed(1)}% de coincidencia con la red vial
-              </p>
-            </div>
-          </div>
-        )}
       </div>
 
       {analysis && (
@@ -341,12 +727,12 @@ function RouteDetailModule({ route, onBack }) {
             {adminData.length > 0 ? (
               <div className="chart-container">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={adminData}>
+                  <BarChart data={adminData} layout="vertical">
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
+                    <XAxis type="number" tickFormatter={(v) => `${v.toFixed(1)} km`} />
+                    <YAxis type="category" dataKey="name" width={70} />
                     <Tooltip formatter={(value) => `${value.toFixed(2)} km`} />
-                    <Bar dataKey="km" fill="#3b82f6" />
+                    <Bar dataKey="km" fill="#3b82f6" label={{ position: 'right', formatter: (v) => `${v.toFixed(2)} km`, fontSize: 11 }} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -575,6 +961,26 @@ function RouteDetailModule({ route, onBack }) {
               );
             })()}
           </div>
+          </div>
+        </div>
+      )}
+
+      {/* Confianza del Análisis - discreto al final */}
+      {analysis && (
+        <div style={{ marginTop: '1.5rem', padding: '0.75rem', backgroundColor: '#f9fafb', borderRadius: '0.5rem', border: '1px solid #e5e7eb' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <span style={{ fontSize: '0.75rem', color: '#6b7280', whiteSpace: 'nowrap' }}>Confianza del análisis:</span>
+            <div style={{ flex: 1, height: '6px', backgroundColor: '#e5e7eb', borderRadius: '3px', overflow: 'hidden' }}>
+              <div style={{ 
+                width: `${analysis.confianza_matching || 0}%`,
+                height: '100%',
+                backgroundColor: analysis.confianza_matching > 70 ? '#10b981' : analysis.confianza_matching > 40 ? '#f59e0b' : '#ef4444',
+                borderRadius: '3px'
+              }} />
+            </div>
+            <span style={{ fontSize: '0.75rem', color: '#6b7280', whiteSpace: 'nowrap' }}>
+              {analysis.confianza_matching?.toFixed(1)}%
+            </span>
           </div>
         </div>
       )}

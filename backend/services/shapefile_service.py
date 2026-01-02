@@ -12,12 +12,26 @@ class ShapefileService:
         os.makedirs(self.shapefiles_folder, exist_ok=True)
     
     def save_shapefile(self, files, shapefile_type):
-        """Save uploaded shapefile components"""
+        """Save uploaded shapefile components or KML file"""
         # Create temp directory for uploaded files
         temp_dir = tempfile.mkdtemp()
         shp_file = None
+        kml_file = None
         
         try:
+            # Check if it's a KML upload
+            for file in files:
+                if file.filename.lower().endswith('.kml'):
+                    kml_path = os.path.join(temp_dir, 'data.kml')
+                    file.save(kml_path)
+                    kml_file = kml_path
+                    break
+            
+            # If KML file found, process it
+            if kml_file:
+                return self._process_kml(kml_file, shapefile_type, temp_dir)
+            
+            # Otherwise, process as shapefile
             # Get base name from .shp file to ensure all files have matching names
             base_name = None
             for file in files:
@@ -27,7 +41,7 @@ class ShapefileService:
                     break
             
             if not base_name:
-                return {'success': False, 'error': 'No .shp file found in upload'}
+                return {'success': False, 'error': 'No se encontró archivo .shp o .kml'}
             
             # Save all uploaded files with consistent naming
             for file in files:
@@ -41,7 +55,7 @@ class ShapefileService:
                     shp_file = filepath
             
             if not shp_file:
-                return {'success': False, 'error': 'No .shp file found in upload'}
+                return {'success': False, 'error': 'No se encontró archivo .shp o .kml'}
             
             # Remove .cpg file if exists (it may specify wrong encoding)
             cpg_file = os.path.join(temp_dir, 'data.cpg')
@@ -101,6 +115,57 @@ class ShapefileService:
             # Cleanup temp directory
             shutil.rmtree(temp_dir, ignore_errors=True)
     
+    def _process_kml(self, kml_file, shapefile_type, temp_dir):
+        """Process KML file and save as shapefile"""
+        try:
+            # Enable KML driver in fiona
+            import fiona
+            fiona.drvsupport.supported_drivers['KML'] = 'rw'
+            
+            # Read KML file
+            gdf = gpd.read_file(kml_file, driver='KML')
+            
+            if gdf is None or len(gdf) == 0:
+                return {'success': False, 'error': 'El archivo KML está vacío'}
+            
+            # Ensure WGS84 projection
+            if gdf.crs is None:
+                gdf.set_crs(epsg=4326, inplace=True)
+            elif gdf.crs.to_epsg() != 4326:
+                gdf = gdf.to_crs(epsg=4326)
+            
+            # Validate based on type
+            validation = self._validate_shapefile(gdf, shapefile_type)
+            if not validation['valid']:
+                return {'success': False, 'error': validation['error']}
+            
+            # Save to permanent location as shapefile
+            dest_folder = os.path.join(self.shapefiles_folder, shapefile_type)
+            if os.path.exists(dest_folder):
+                shutil.rmtree(dest_folder)
+            os.makedirs(dest_folder)
+            
+            dest_path = os.path.join(dest_folder, f'{shapefile_type}.shp')
+            gdf.to_file(dest_path)
+            
+            # Get bounds
+            bounds = gdf.total_bounds.tolist()
+            
+            return {
+                'success': True,
+                'filename': os.path.basename(kml_file),
+                'features_count': len(gdf),
+                'bounds': bounds,
+                'attributes': list(gdf.columns),
+                'crs': str(gdf.crs)
+            }
+            
+        except Exception as e:
+            return {'success': False, 'error': f'Error al procesar KML: {str(e)}'}
+        finally:
+            # Cleanup temp directory
+            shutil.rmtree(temp_dir, ignore_errors=True)
+    
     def _validate_shapefile(self, gdf, shapefile_type):
         """Validate shapefile structure based on type"""
         if len(gdf) == 0:
@@ -123,6 +188,13 @@ class ShapefileService:
         elif shapefile_type == 'localities':
             # Can be Point or Polygon
             pass
+        
+        elif shapefile_type in ['sites_public', 'sites_private']:
+            # Sites (bases) should be Point geometry
+            geom_types = gdf.geometry.geom_type.unique()
+            valid_types = ['Point', 'MultiPoint']
+            if not any(gt in valid_types for gt in geom_types):
+                return {'valid': False, 'error': f'Sitios deben contener geometrías de tipo Point, se encontró: {geom_types}'}
         
         return {'valid': True}
     

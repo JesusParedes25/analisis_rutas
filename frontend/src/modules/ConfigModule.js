@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Upload, CheckCircle, XCircle, Database, Map, Building2, MapPin, RefreshCw, Grid3X3 } from 'lucide-react';
+import { Upload, CheckCircle, XCircle, Database, Map, Building2, MapPin, RefreshCw, Grid3X3, Bus, Car } from 'lucide-react';
 import { MapContainer, TileLayer, GeoJSON, useMap } from 'react-leaflet';
 import { getConfig, uploadShapefile, getShapefilePreview, setBuffer } from '../api';
 import 'leaflet/dist/leaflet.css';
@@ -95,6 +95,8 @@ function ConfigModule() {
       case 'municipalities': return 'Límites Municipales';
       case 'localities': return 'Marco Geoestadístico de Localidades';
       case 'manzanas': return 'Manzanas (Censo)';
+      case 'sites_public': return 'Sitios - Transporte Público';
+      case 'sites_private': return 'Sitios - Transporte Privado';
       default: return type;
     }
   };
@@ -105,6 +107,8 @@ function ConfigModule() {
       case 'municipalities': return <Building2 className="w-5 h-5" />;
       case 'localities': return <MapPin className="w-5 h-5" />;
       case 'manzanas': return <Grid3X3 className="w-5 h-5" />;
+      case 'sites_public': return <Bus className="w-5 h-5" />;
+      case 'sites_private': return <Car className="w-5 h-5" />;
       default: return <Database className="w-5 h-5" />;
     }
   };
@@ -119,6 +123,10 @@ function ConfigModule() {
         return { color: '#10b981', weight: 1, fillOpacity: 0.5 };
       case 'manzanas':
         return { color: '#8b5cf6', weight: 1, fillOpacity: 0.3 };
+      case 'sites_public':
+        return { color: '#f59e0b', weight: 2, fillOpacity: 0.8 };
+      case 'sites_private':
+        return { color: '#ef4444', weight: 2, fillOpacity: 0.8 };
       default:
         return {};
     }
@@ -174,7 +182,7 @@ function ConfigModule() {
             id={`file-${type}`}
             type="file"
             multiple
-            accept=".shp,.dbf,.shx,.prj,.cpg"
+            accept=".shp,.dbf,.shx,.prj,.cpg,.kml"
             style={{ display: 'none' }}
             onChange={(e) => handleFileUpload(type, e.target.files)}
           />
@@ -187,7 +195,7 @@ function ConfigModule() {
                 {isLoaded ? 'Clic para reemplazar shapefile' : 'Clic para subir shapefile'}
               </p>
               <p className="file-upload-hint">
-                Selecciona todos los archivos (.shp, .dbf, .shx, .prj)
+                Shapefile (.shp, .dbf, .shx, .prj) o KML (.kml)
               </p>
             </>
           )}
@@ -242,6 +250,18 @@ function ConfigModule() {
         {renderShapefileCard('manzanas')}
       </div>
 
+      {/* Sitios (Bases) - Opcional */}
+      <div className="page-header" style={{ marginTop: '2rem', marginBottom: '1rem' }}>
+        <h3 style={{ fontSize: '1.1rem', margin: 0 }}>Sitios / Bases (Opcional)</h3>
+        <p style={{ fontSize: '0.85rem', color: '#6b7280', margin: '0.25rem 0 0 0' }}>
+          Puntos de referencia para análisis de rutas. Ambos son opcionales.
+        </p>
+      </div>
+      <div className="grid-2">
+        {renderShapefileCard('sites_public')}
+        {renderShapefileCard('sites_private')}
+      </div>
+
       <div className="card">
         <div className="card-header">
           <span className="card-title">Parámetros de Análisis</span>
@@ -291,11 +311,17 @@ function ConfigModule() {
                 data={previewData}
                 style={() => getLayerStyle(previewType)}
                 pointToLayer={(feature, latlng) => {
+                  const colors = {
+                    localities: { fill: '#10b981', stroke: '#065f46' },
+                    sites_public: { fill: '#f59e0b', stroke: '#b45309' },
+                    sites_private: { fill: '#ef4444', stroke: '#b91c1c' }
+                  };
+                  const c = colors[previewType] || colors.localities;
                   return window.L.circleMarker(latlng, {
-                    radius: 4,
-                    fillColor: '#10b981',
-                    color: '#065f46',
-                    weight: 1,
+                    radius: previewType?.startsWith('sites_') ? 6 : 4,
+                    fillColor: c.fill,
+                    color: c.stroke,
+                    weight: 2,
                     opacity: 1,
                     fillOpacity: 0.8
                   });

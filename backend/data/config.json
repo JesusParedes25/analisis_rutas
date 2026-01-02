@@ -58,13 +58,13 @@
   },
   "localities": {
     "loaded": true,
-    "filename": "13l.shp",
-    "features_count": 2534,
+    "filename": "data.shp",
+    "features_count": 2510,
     "bounds": [
-      -99.84848699431254,
-      19.60714104522444,
-      -98.01609621394904,
-      21.379559273740153
+      -99.84848699431255,
+      19.607141045224473,
+      -98.01609621394906,
+      21.37955927374017
     ],
     "attributes": [
       "CVEGEO",
@@ -75,7 +75,7 @@
       "AMBITO",
       "geometry"
     ],
-    "uploaded_at": "2025-12-24T11:22:03.663727"
+    "uploaded_at": "2025-12-29T13:33:25.234007"
   },
   "buffer_distance": 50,
   "manzanas": {
@@ -157,5 +157,39 @@
       "geometry"
     ],
     "uploaded_at": "2025-12-24T14:23:36.279296"
+  },
+  "sites_public": {
+    "loaded": true,
+    "filename": "data.kml",
+    "features_count": 6,
+    "bounds": [
+      -98.8647285,
+      19.9763386,
+      -98.8293354,
+      20.0106721
+    ],
+    "attributes": [
+      "Name",
+      "Description",
+      "geometry"
+    ],
+    "uploaded_at": "2025-12-29T12:24:25.367688"
+  },
+  "sites_private": {
+    "loaded": true,
+    "filename": "data.kml",
+    "features_count": 9,
+    "bounds": [
+      -98.8681504,
+      19.9763386,
+      -98.8208975,
+      20.0315348
+    ],
+    "attributes": [
+      "Name",
+      "Description",
+      "geometry"
+    ],
+    "uploaded_at": "2025-12-29T12:24:29.097073"
   }
 }

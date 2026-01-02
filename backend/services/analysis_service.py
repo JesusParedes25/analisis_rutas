@@ -250,12 +250,25 @@ class AnalysisService:
         return R * c
     
     def _load_shapefile(self, shapefile_type):
-        """Load a shapefile as GeoDataFrame"""
+        """Load a shapefile as GeoDataFrame with proper encoding"""
         shp_path = os.path.join(self.data_folder, 'shapefiles', shapefile_type, f'{shapefile_type}.shp')
         
         if not os.path.exists(shp_path):
             return None
         
+        # Try multiple encodings for Spanish characters
+        encodings = ['utf-8', 'latin-1', 'cp1252', 'iso-8859-1']
+        for encoding in encodings:
+            try:
+                gdf = gpd.read_file(shp_path, encoding=encoding)
+                # Test if encoding worked by checking for garbled characters
+                sample = str(gdf.iloc[0].to_dict()) if len(gdf) > 0 else ''
+                if 'Ã' not in sample:  # Common sign of wrong encoding
+                    return gdf
+            except Exception:
+                continue
+        
+        # Fallback
         return gpd.read_file(shp_path)
     
     def _map_matching(self, route_line, road_network, buffer_distance):
