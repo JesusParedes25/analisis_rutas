@@ -45,6 +45,15 @@ export_service = ExportService(RESULTS_FOLDER)
 ROUTES_DB = os.path.join(DATA_FOLDER, 'routes.json')
 CONFIG_DB = os.path.join(DATA_FOLDER, 'config.json')
 
+# Cache for dashboard calculations (municipio -> {hash, stats})
+_dashboard_cache = {}
+
+def _get_routes_hash(routes):
+    """Generate a hash based on analyzed routes to detect changes"""
+    import hashlib
+    route_data = [(r['id'], r.get('analyzed', False), r.get('analysis', {}).get('distancia_km', 0)) for r in routes]
+    return hashlib.md5(str(sorted(route_data)).encode()).hexdigest()
+
 def load_routes_db():
     if os.path.exists(ROUTES_DB):
         with open(ROUTES_DB, 'r', encoding='utf-8') as f:
@@ -509,10 +518,18 @@ def _calculate_combined_service_area(analyzed_routes, municipio_name=None):
 
 @app.route('/api/dashboard/municipio/<municipio>', methods=['GET'])
 def get_municipio_dashboard(municipio):
-    """Get statistics for a specific municipality"""
+    """Get statistics for a specific municipality with caching"""
     db = load_routes_db()
     routes = [r for r in db['routes'] if r.get('municipio') == municipio]
     analyzed_routes = [r for r in routes if r.get('analyzed', False)]
+    
+    # Check cache - only recalculate if routes changed
+    routes_hash = _get_routes_hash(analyzed_routes)
+    if municipio in _dashboard_cache and _dashboard_cache[municipio].get('hash') == routes_hash:
+        print(f"[Cache HIT] Dashboard for {municipio}")
+        return jsonify(_dashboard_cache[municipio]['stats'])
+    
+    print(f"[Cache MISS] Calculating dashboard for {municipio}...")
     
     stats = {
         'municipio': municipio,
@@ -598,6 +615,13 @@ def get_municipio_dashboard(municipio):
     if served_gdf is not None and len(served_gdf) > 0:
         served_gdf_wgs = served_gdf.to_crs(epsg=4326)
         _served_manzanas_cache[municipio] = served_gdf_wgs
+    
+    # Save to cache for future requests
+    _dashboard_cache[municipio] = {
+        'hash': routes_hash,
+        'stats': stats
+    }
+    print(f"[Cache SAVED] Dashboard for {municipio}")
     
     return jsonify(stats)
 

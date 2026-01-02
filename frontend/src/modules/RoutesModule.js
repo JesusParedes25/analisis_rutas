@@ -18,8 +18,7 @@ function RoutesModule({ onViewRoute }) {
   });
   const [batchFormData, setBatchFormData] = useState({
     municipio: '',
-    modalidad: '',
-    clave_mnemotecnica: ''
+    modalidad: ''
   });
   const [editingRoute, setEditingRoute] = useState(null);
   const [editFormData, setEditFormData] = useState({
@@ -276,15 +275,15 @@ function RoutesModule({ onViewRoute }) {
             <div className="alert alert-info mb-2">
               <FileSpreadsheet className="w-5 h-5" />
               <div>
-                <strong>Subida masiva:</strong> Selecciona metadatos para aplicar a todas las rutas del ZIP.
+                <strong>Subida masiva:</strong> Selecciona el municipio y modalidad para todas las rutas del ZIP.
                 <br />
-                <small>Opcionalmente, agrega un CSV para especificar metadatos individuales por archivo.</small>
+                <small>La clave mnemotécnica será automáticamente el nombre de cada archivo GPX.</small>
               </div>
             </div>
             
             <div className="form-grid mb-3">
               <div className="form-group">
-                <label className="form-label">Municipio (aplica a todas)</label>
+                <label className="form-label">Municipio (aplica a todas las rutas)</label>
                 <select
                   className="form-select"
                   value={batchFormData.municipio}
@@ -295,7 +294,7 @@ function RoutesModule({ onViewRoute }) {
                 </select>
               </div>
               <div className="form-group">
-                <label className="form-label">Modalidad (aplica a todas)</label>
+                <label className="form-label">Modalidad (aplica a todas las rutas)</label>
                 <select
                   className="form-select"
                   value={batchFormData.modalidad}
@@ -305,24 +304,13 @@ function RoutesModule({ onViewRoute }) {
                   {modalidades.map(m => <option key={m} value={m}>{m}</option>)}
                 </select>
               </div>
-              <div className="form-group">
-                <label className="form-label">Clave Mnemotécnica</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  value={batchFormData.clave_mnemotecnica}
-                  onChange={(e) => setBatchFormData({ ...batchFormData, clave_mnemotecnica: e.target.value })}
-                  placeholder="Ej: RUT-LOTE-001"
-                />
-              </div>
             </div>
             
             <div className="file-upload" onClick={() => document.getElementById('gpx-batch').click()}>
               <input
                 id="gpx-batch"
                 type="file"
-                accept=".zip,.csv"
-                multiple
+                accept=".zip"
                 style={{ display: 'none' }}
                 onChange={handleBatchUpload}
               />
@@ -331,8 +319,8 @@ function RoutesModule({ onViewRoute }) {
               ) : (
                 <>
                   <FileArchive className="file-upload-icon" />
-                  <p className="file-upload-text">Clic para seleccionar archivos</p>
-                  <p className="file-upload-hint">ZIP con GPX + CSV opcional con metadatos</p>
+                  <p className="file-upload-text">Clic para seleccionar archivo ZIP</p>
+                  <p className="file-upload-hint">Archivo .zip con archivos GPX dentro</p>
                 </>
               )}
             </div>

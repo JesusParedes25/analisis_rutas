@@ -100,7 +100,7 @@ class GPXService:
                                 'nombre': metadata.get('nombre') or base_name,
                                 'municipio': metadata.get('municipio', ''),
                                 'modalidad': metadata.get('modalidad', ''),
-                                'clave_mnemotecnica': metadata.get('clave_mnemotecnica', ''),
+                                'clave_mnemotecnica': base_name,  # Auto-assign filename as clave
                                 'uploaded_at': datetime.now().isoformat(),
                                 'analyzed': False,
                                 'points_count': gpx_info['points_count'],
